@@ -1,5 +1,6 @@
 import gym
-import gym_snake
+import gym_chrome_dino
+#import gym_snake
 import time
 import random
 import numpy as np
@@ -9,27 +10,12 @@ from tflearn.layers.estimator import regression
 from statistics import median, mean
 from collections import Counter
 
-
-env = gym.make('Snake-v0')
-"""
-for i_episode in range(10):
-    observation = env.reset()
-    for t in range(500):
-        env.render()
-        time.sleep(0.05)
-        action = env.action_space.sample()
-        observation, reward, done, info = env.step(action)
-        if done:
-            print("Episode finished after {} timesteps".format(t+1))
-            break
-env.close()
-"""
 LR = 1e-4  
-#env.reset()
-goal_steps = 100
-score_requirement = -500
-initial_games = 1
-
+goal_steps = 500
+score_requirement = 10
+initial_games = 10
+env = gym.make('ChromeDinoNoBrowser-v0')
+env.reset()
 def initial_population():
     # [OBS, MOVES]
     training_data = []
@@ -46,10 +32,9 @@ def initial_population():
         # previous observation that we saw
         prev_observation = []
         # for each frame in 200
-        for _ in range(goal_steps):
-            #env.render()
+        for i in range(goal_steps):
             # choose random action (0 or 1)
-            action = random.randrange(0,2)
+            action = env.action_space.sample()
             # do it!
             observation, reward, done, info = env.step(action)
             
@@ -61,7 +46,7 @@ def initial_population():
             prev_observation = observation
             score+=reward
             if done: break
-
+        #print(prev_observation)
         # IF our score is higher than our threshold, we'd like to save
         # every move we made
         # NOTE the reinforcement methodology here. 
@@ -73,16 +58,12 @@ def initial_population():
             for data in game_memory:
                 # convert to one-hot (this is the output layer for our neural network)
                 if data[1] == 1:
-                    output = [0,1,0,0,0]
-                elif data[1] == 2:
-                    output = [0,0,1,0,0]
-                elif data[1] == 3:
-                    output = [0,0,0,1,0]
-                elif data[1] == 4:
-                    output = [0,0,0,0,1]
+                    output = [0,1,0]
                 elif data[1] == 0:
-                    output = [0,0,0,0,0]
-                    
+                    output = [1,0,0]
+                elif data[1] == 2:
+                    output = [0,0,1]
+
                 # saving our training data
                 training_data.append([data[0], output])
 
@@ -99,8 +80,10 @@ def initial_population():
     print('Average accepted score:',mean(accepted_scores))
     print('Median score for accepted scores:',median(accepted_scores))
     print(Counter(accepted_scores))
-    
-    return training_data
+    #print(game_memory,"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    #print(training_data)
+    #return training_data
+
 
 def neural_network_model(input_size):
 
@@ -143,7 +126,7 @@ def smart_population(model):
     training_data = []
     scores = []
     accepted_scores = []
-    for _ in range(10):
+    for _ in range(20):
         score = 0
         game_memory = []
         prev_observation = []
@@ -182,6 +165,9 @@ def smart_population(model):
 
     return training_data
 
+ 
+
+
 training_data = initial_population()
 model = train_model(training_data)
 
@@ -217,3 +203,5 @@ for each_game in range(10):
 print('Average Score:',sum(scores)/len(scores))
 print('choice 1:{}  choice 0:{}'.format(choices.count(1)/len(choices),choices.count(0)/len(choices)))
 print(score_requirement)
+
+env.close()

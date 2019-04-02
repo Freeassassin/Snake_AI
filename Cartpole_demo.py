@@ -10,8 +10,8 @@ from collections import Counter
 LR = 1e-4  
 env = gym.make("CartPole-v0")
 env.reset()
-goal_steps = 700
-score_requirement = 60
+goal_steps = 500
+score_requirement = 50
 initial_games = 100000
 
 def initial_population():
@@ -43,7 +43,7 @@ def initial_population():
             prev_observation = observation
             score+=reward
             if done: break
-
+        #print(prev_observation)
         # IF our score is higher than our threshold, we'd like to save
         # every move we made
         # NOTE the reinforcement methodology here. 
@@ -75,7 +75,8 @@ def initial_population():
     print('Average accepted score:',mean(accepted_scores))
     print('Median score for accepted scores:',median(accepted_scores))
     print(Counter(accepted_scores))
-    
+    #print(game_memory,"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    #print(training_data)
     return training_data
 
 def neural_network_model(input_size):
@@ -119,7 +120,7 @@ def smart_population(model):
 	training_data = []
 	scores = []
 	accepted_scores = []
-	for _ in range(10):
+	for _ in range(20):
 	    score = 0
 	    game_memory = []
 	    prev_observation = []
@@ -172,7 +173,7 @@ for each_game in range(10):
     game_memory = []
     prev_obs = []
     env.reset()
-    for _ in range(goal_steps):
+    for _ in range(500):
         env.render()
 
         if len(prev_obs)==0:
