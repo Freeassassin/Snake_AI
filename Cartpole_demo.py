@@ -1,6 +1,7 @@
 import gym
 import random
 import numpy as np
+import 
 import tflearn
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.estimator import regression
@@ -12,7 +13,7 @@ env = gym.make("CartPole-v0")
 env.reset()
 goal_steps = 700
 score_requirement = 60
-initial_games = 100000
+initial_games = 10000
 
 def initial_population():
     # [OBS, MOVES]
@@ -174,7 +175,7 @@ for each_game in range(10):
     env.reset()
     for _ in range(goal_steps):
         env.render()
-
+        sleep(0.1)
         if len(prev_obs)==0:
             action = random.randrange(0,2)
         else:
