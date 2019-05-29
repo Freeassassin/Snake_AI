@@ -1,6 +1,4 @@
 import gym
-import gym_snake
-import time
 import random
 import numpy as np
 import tflearn
@@ -9,26 +7,12 @@ from tflearn.layers.estimator import regression
 from statistics import median, mean
 from collections import Counter
 
-
-env = gym.make('Snake-v0')
-
-for i_episode in range(10):
-    observation = env.reset()
-    for t in range(500):
-        env.render()
-        time.sleep(0.05)
-        action = env.action_space.sample()
-        observation, reward, done, info = env.step(action)
-        if done:
-            print("Episode finished after {} timesteps".format(t+1))
-            break
-env.close()
-
-LR = 1e-4  
-#env.reset()
-goal_steps = 100
-score_requirement = -500
-initial_games = 1
+LR = 1e-3
+env = gym.make("CartPole-v0")
+env.reset()
+goal_steps = 500
+score_requirement = 50
+initial_games = 10000
 
 def initial_population():
     # [OBS, MOVES]
@@ -39,7 +23,6 @@ def initial_population():
     accepted_scores = []
     # iterate through however many games we want:
     for _ in range(initial_games):
-        observation = env.reset()
         score = 0
         # moves specifically from this environment:
         game_memory = []
@@ -47,7 +30,6 @@ def initial_population():
         prev_observation = []
         # for each frame in 200
         for _ in range(goal_steps):
-            #env.render()
             # choose random action (0 or 1)
             action = random.randrange(0,2)
             # do it!
@@ -73,15 +55,9 @@ def initial_population():
             for data in game_memory:
                 # convert to one-hot (this is the output layer for our neural network)
                 if data[1] == 1:
-                    output = [0,1,0,0,0]
-                elif data[1] == 2:
-                    output = [0,0,1,0,0]
-                elif data[1] == 3:
-                    output = [0,0,0,1,0]
-                elif data[1] == 4:
-                    output = [0,0,0,0,1]
+                    output = [0,1]
                 elif data[1] == 0:
-                    output = [0,0,0,0,0]
+                    output = [1,0]
                     
                 # saving our training data
                 training_data.append([data[0], output])
@@ -127,6 +103,7 @@ def neural_network_model(input_size):
 
     return model
 
+
 def train_model(training_data, model=False):
 
     X = np.array([i[0] for i in training_data]).reshape(-1,len(training_data[0][0]),1)
@@ -135,59 +112,11 @@ def train_model(training_data, model=False):
     if not model:
         model = neural_network_model(input_size = len(X[0]))
     
-    model.fit({'input': X}, {'targets': y}, n_epoch=3, snapshot_step=500, show_metric=True, run_id='openai_learning')
+    model.fit({'input': X}, {'targets': y}, n_epoch=5, snapshot_step=500, show_metric=True, run_id='openai_learning')
     return model
-
-def smart_population(model):
-
-    training_data = []
-    scores = []
-    accepted_scores = []
-    for _ in range(10):
-        score = 0
-        game_memory = []
-        prev_observation = []
-        for _ in range(goal_steps):
-            if len(prev_observation)==0:
-                action = random.randrange(0,2)
-            else:
-                action = np.argmax(model.predict(prev_observation.reshape(-1,len(prev_observation),1))[0])
-            observation, reward, done, info = env.step(action)
-            
-            if len(prev_observation) > 0 :
-                game_memory.append([prev_observation, action])
-            prev_observation = observation
-            score+=reward
-            if done: break
-
-        if score >= score_requirement:
-            accepted_scores.append(score)
-            for data in game_memory:
-                if data[1] == 1:
-                    output = [0,1]
-                elif data[1] == 0:
-                    output = [1,0]
-                    
-                training_data.append([data[0], output])
-
-        env.reset()
-        scores.append(score)
-
-    training_data_save = np.array(training_data)
-    np.save('saved.npy',training_data_save)
-
-    print('Average accepted score:',mean(accepted_scores))
-    print('Median score for accepted scores:',median(accepted_scores))
-    print(Counter(accepted_scores))
-
-    return training_data
 
 training_data = initial_population()
 model = train_model(training_data)
-
-training_data = smart_population(model)
-model = train_model(training_data, model= model)
-
 
 scores = []
 choices = []

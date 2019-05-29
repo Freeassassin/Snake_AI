@@ -7,12 +7,12 @@ from tflearn.layers.estimator import regression
 from statistics import median, mean
 from collections import Counter
 
-LR = 1e-4  
+LR = 1e-3
 env = gym.make("CartPole-v0")
 env.reset()
-goal_steps = 700
-score_requirement = 60
-initial_games = 100000
+goal_steps = 500
+score_requirement = 50
+initial_games = 10000
 
 def initial_population():
     # [OBS, MOVES]
@@ -111,9 +111,9 @@ def train_model(training_data, model=False):
     if not model:
         model = neural_network_model(input_size = len(X[0]))
     
-    model.fit({'input': X}, {'targets': y}, n_epoch=3, snapshot_step=500, show_metric=True, run_id='openai_learning')
+    model.fit({'input': X}, {'targets': y}, n_epoch=5, snapshot_step=500, show_metric=True, run_id='openai_learning')
     return model
-
+    
 def smart_population(model):
 
 	training_data = []

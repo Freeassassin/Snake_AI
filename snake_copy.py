@@ -8,7 +8,7 @@ from tkinter import messagebox
 class cube(object):
     rows = 20
     w = 500
-    def __init__(self,start,dirnx=1,dirny=0,color=(255,0,0)):
+    def __init__(self,start,dirnx=1,dirny=0,color=(0,255,0)):
         self.pos = start
         self.dirnx = 1
         self.dirny = 0
@@ -142,7 +142,7 @@ def redrawWindow(surface):
     surface.fill((0,0,0))
     s.draw(surface)
     snack.draw(surface)
-    drawGrid(width,rows, surface)
+    #drawGrid(width,rows, surface)
     pygame.display.update()
 
 
@@ -161,24 +161,13 @@ def randomSnack(rows, item):
     return (x,y)
 
 
-def message_box(subject, content):
-    root = tk.Tk()
-    root.attributes("-topmost", True)
-    root.withdraw()
-    messagebox.showinfo(subject, content)
-    try:
-        root.destroy()
-    except:
-        pass
-
-
 def main():
     global width, rows, s, snack
     width = 500
     rows = 20
     win = pygame.display.set_mode((width, width))
     s = snake((255,0,0), (10,10))
-    snack = cube(randomSnack(rows, s), color=(0,255,0))
+    snack = cube(randomSnack(rows, s), color=(255,0,0))
     flag = True
 
     clock = pygame.time.Clock()
@@ -189,15 +178,15 @@ def main():
         s.move()
         if s.body[0].pos == snack.pos:
             s.addCube()
-            snack = cube(randomSnack(rows, s), color=(0,255,0))
+            snack = cube(randomSnack(rows, s), color=(255,0,0))
 
         for x in range(len(s.body)):
             if s.body[x].pos in list(map(lambda z:z.pos,s.body[x+1:])):
                 print('Score: ', len(s.body))
-                message_box('You Lost!', 'Play again...')
+                #message_box('You Lost!', 'Play again...')
                 s.reset((10,10))
                 break
-
+ 
             
         redrawWindow(win)
 
