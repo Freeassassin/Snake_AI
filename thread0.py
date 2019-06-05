@@ -19,7 +19,7 @@ goal_steps = 1000
 score_requirement = 1
 initial_games = 10000
 env = gym.make("snek-v1")
-
+env.reset()
 def cal_Distance(x1,y1,x2,y2):
     dist = np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
     return dist
@@ -76,12 +76,16 @@ for _ in range(initial_games):
         body.sort()
         try:
             prev_observation = [cal_Distance(snake_head[0],snake_head[1],food[0],food[1]), snake_head[0],snake_head[1],16- snake_head[0], 16 - snake_head[1]]
+            """
             for i in body:
                 prev_observation.append(cal_Distance(snake_head[0],snake_head[1],i[0],i[1]))
+            """
         except:
             prev_observation = [0, snake_head[0],snake_head[1],16- snake_head[0], 16 - snake_head[1]]
+            """
             for i in body:
                 prev_observation.append(cal_Distance(snake_head[0],snake_head[1],i[0],i[1]))
+            """
         score+=reward
         if done: break
 

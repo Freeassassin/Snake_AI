@@ -12,14 +12,7 @@ from tflearn.layers.estimator import regression
 from statistics import median, mean
 from collections import Counter
 
-def cal_Distance(x1,y1,x2,y2):
-	dist = np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
-	return dist
-
-def body_Dis(snake_head,body):
-	for i in body:
-		return cal_Distance(snake_head[0],snake_head[1],i[0],i[1])
-
+ 
 LR = 1e-4  
 goal_steps = 1000
 score_requirement = 1
