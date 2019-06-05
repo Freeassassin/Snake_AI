@@ -13,12 +13,42 @@ from tflearn.layers.estimator import regression
 from statistics import median, mean
 from collections import Counter
 
-
-LR = 1e-4  
 goal_steps = 1000
 score_requirement = 1
 initial_games = 10000
 env = gym.make("snek-v1")
+env.reset()
+
+def whereFood(x1,y1,x2,y2):
+    if x1 == x2:
+        if y1 > y2:
+            prev_observation.extend([0,0,0,0,y1 - y2,0,0,0])
+        else:
+            prev_observation.extend([y2 - y1,0,0,0,0,0,0,0])
+    elif y1 == y2:
+        if x1 > x2:
+            prev_observation.extend([0,0,0,0,0,0,x1 - x2,0])
+        else:
+            prev_observation.extend([0,0,x2 - x1,0,0,0,0,0])
+    elif x1 > x2:
+        if (x1 - x2) == (y1 - y2):
+            prev_observation.extend([0,0,0,0,0,cal_Distance(x1,y1,x2,y2),0,0])
+        elif (x1 - x2) == (y2 - y1):
+            prev_observation.extend([0,0,0,0,0,0,0,cal_Distance(x1,y1,x2,y2)])
+    elif x2 > x1:
+        if (x2 - x1) == (y2 - y1):
+            prev_observation.extend([0,cal_Distance(x1,y1,x2,y2),0,0,0,0,0,0])
+        elif (x2 - x1) == (y1 - y2):
+            prev_observation.extend([0,0,0,cal_Distance(x1,y1,x2,y2),0,0,0,0])
+    else:
+        prev_observation.extend([0,0,0,0,0,0,0,0])
+
+def whereWall(x,y):
+    if x > y:
+
+        prev_observation.extend([16 - y, 0, x - 16, 0, y- 16, 0, 16 - x, 0])
+    else:
+        
 
 def cal_Distance(x1,y1,x2,y2):
     dist = np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
@@ -27,10 +57,28 @@ def cal_Distance(x1,y1,x2,y2):
 training_data = []
 scores = []
 accepted_scores = []
-
+"""
+[[  0.   0.   0.   0. 255.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0. 100.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0. 100.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0. 100.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0. 101.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]
+ [  0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.   0.    0.   0.]]
+(10, 6)
+"""
 for _ in range(initial_games):
-    env.reset()
-    snake_head = ()
+    #env.reset()
+    #snake_head = ()
     food=()
     body=[]
     wall=[]
@@ -38,8 +86,8 @@ for _ in range(initial_games):
     game_memory = []
     prev_observation = []
     for i in range(goal_steps):
-        env.render()
-        sleep(0.01)
+        #env.render()
+        #sleep(0.01)
         action = env.action_space.sample()
         
         observation, reward, done, info = env.step(action)
@@ -76,12 +124,18 @@ for _ in range(initial_games):
         body.sort()
         try:
             prev_observation = [cal_Distance(snake_head[0],snake_head[1],food[0],food[1]), snake_head[0],snake_head[1],16- snake_head[0], 16 - snake_head[1]]
+            """
+            if 
+            obs = []
             for i in body:
                 prev_observation.append(cal_Distance(snake_head[0],snake_head[1],i[0],i[1]))
+            """
         except:
             prev_observation = [0, snake_head[0],snake_head[1],16- snake_head[0], 16 - snake_head[1]]
+            """
             for i in body:
                 prev_observation.append(cal_Distance(snake_head[0],snake_head[1],i[0],i[1]))
+            """
         score+=reward
         if done: break
 
@@ -107,8 +161,14 @@ print('Average accepted score:',mean(accepted_scores))
 print('Median score for accepted scores:',median(accepted_scores))
 print(Counter(accepted_scores))
 
-File_object = open(r"training_data.txt","a")
+File_object = open(r"x_train.txt","a")
+File_object1 = open(r"y_train.txt","a")
 for i in training_data:
-    File_object.write(str(i))
-    File_object.write(",") 
-File_object.close() 
+    for j in i[0]:
+        File_object.write(str(j))
+        File_object.write(",")
+    for j in i[1]:
+        File_object1.write(str(j))
+        File_object1.write(",") 
+File_object.close()
+File_object1.close()
