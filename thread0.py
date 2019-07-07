@@ -44,11 +44,11 @@ def whereFood(x1,y1,x2,y2):
         prev_observation.extend([0,0,0,0,0,0,0,0])
 
 def whereWall(x,y):
-    if x > y:
+    prev_observation.extend([16 - y, x - 16, y- 16, 16 - x])
 
-        prev_observation.extend([16 - y, 0, x - 16, 0, y- 16, 0, 16 - x, 0])
-    else:
-        
+def whereBod(x,y,body):
+    for i in range(9):
+
 
 def cal_Distance(x1,y1,x2,y2):
     dist = np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
