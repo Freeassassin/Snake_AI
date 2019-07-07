@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 #mnist = tf.keras.datasets.mnist
 
+<<<<<<< HEAD
 #(x_train, y_train), (x_test, y_test ) = mnist.load_data() 
 
 #x_test = tf.keras.utils.normalize(x_test, axis=1)
@@ -21,6 +22,12 @@ x_train = x_train.reshape(2252,5)
 print(x_train)
 y_train = y_train.reshape(2252,4)
 print(y_train)
+=======
+(x_train, y_train), (x_test, y_test ) = mnist.load_data() 
+"""
+x_test = tf.keras.utils.normalize(x_test, axis=1)
+x_train = tf.keras.utils.normalize(x_train, axis=1)
+>>>>>>> 62cfc18309228f499afd224f88963af9ec0a98fe
 
 model = tf.keras.models.Sequential()
 model.add(tf.keras.layers.Dense(128, input_dim= 5 ,activation = tf.nn.relu))
@@ -30,16 +37,25 @@ model.add(tf.keras.layers.Dense(4, activation = tf.nn.softmax))
 
 model.compile(optimizer='adam',loss='categorical_crossentropy',metrics= ['accuracy'])
 model.fit(x_train,y_train,epochs = 3)
+<<<<<<< HEAD
 """
 val_loss, val_acc = model.evaluate(x_test,y_test)
+=======
+
+val_loss, val_acc = model.evaluate(x_train,y_train)
+>>>>>>> 62cfc18309228f499afd224f88963af9ec0a98fe
 print(val_loss, val_acc)
 
 model.save('digit_reader.model')
 
-new_model = tf.keras.models.load_model('digit_reader.model')
-#predictions = new_model.predict([x_train])
+#new_model = tf.keras.models.load_model('digit_reader.model')
+predictions = model.predict([x_train])
 
 print(np.argmax(predictions[0]))
+<<<<<<< HEAD
 plt.imshow(x_test[0])
+=======
+plt.imshow(x_train[0])
+>>>>>>> 62cfc18309228f499afd224f88963af9ec0a98fe
 plt.show()
 """

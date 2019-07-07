@@ -13,13 +13,11 @@ from tflearn.layers.estimator import regression
 from statistics import median, mean
 from collections import Counter
 
-
-LR = 1e-4  
-goal_steps = 1000
+goal_steps = 500
 score_requirement = 1
-initial_games = 10000
+initial_games = 1000
 env = gym.make("snek-v1")
-
+env.reset()
 def cal_Distance(x1,y1,x2,y2):
     dist = np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
     return dist
@@ -29,8 +27,8 @@ scores = []
 accepted_scores = []
 
 for _ in range(initial_games):
-    env.reset()
-    snake_head = ()
+    #env.reset()
+    #snake_head = ()
     food=()
     body=[]
     wall=[]
@@ -38,7 +36,8 @@ for _ in range(initial_games):
     game_memory = []
     prev_observation = []
     for i in range(goal_steps):
-
+        #env.render()
+        #sleep(0.01)
         action = env.action_space.sample()
         
         observation, reward, done, info = env.step(action)
@@ -75,12 +74,16 @@ for _ in range(initial_games):
         body.sort()
         try:
             prev_observation = [cal_Distance(snake_head[0],snake_head[1],food[0],food[1]), snake_head[0],snake_head[1],16- snake_head[0], 16 - snake_head[1]]
+            """
             for i in body:
                 prev_observation.append(cal_Distance(snake_head[0],snake_head[1],i[0],i[1]))
+            """
         except:
             prev_observation = [0, snake_head[0],snake_head[1],16- snake_head[0], 16 - snake_head[1]]
+            """
             for i in body:
                 prev_observation.append(cal_Distance(snake_head[0],snake_head[1],i[0],i[1]))
+            """
         score+=reward
         if done: break
 
