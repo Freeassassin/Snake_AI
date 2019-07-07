@@ -13,9 +13,9 @@ from tflearn.layers.estimator import regression
 from statistics import median, mean
 from collections import Counter
 
-goal_steps = 1000
+goal_steps = 500
 score_requirement = 1
-initial_games = 10000
+initial_games = 1000
 env = gym.make("snek-v1")
 env.reset()
 def cal_Distance(x1,y1,x2,y2):
