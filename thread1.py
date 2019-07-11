@@ -6,9 +6,10 @@ import time
 from time import sleep
 import numpy as np
 from numpy import array
+from statistics import median, mean
+from collections import Counter
 
-
-goal_steps = 1000
+goal_steps = 500
 score_requirement = 1
 initial_games = 10000
 env = gym.make("snek-v1")
@@ -65,6 +66,11 @@ for _ in range(initial_games):
             training_data.append([data[0], output])
     env.reset()
     scores.append(score)  
+
+print('Average accepted score:',mean(accepted_scores))
+print('Median score for accepted scores:',median(accepted_scores))
+print(Counter(accepted_scores))
+
 File_object = open(r"training_data.txt","a")
 for i in training_data:
     File_object.write(str(i))
