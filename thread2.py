@@ -7,9 +7,9 @@ from numpy import array
 from statistics import median, mean
 from collections import Counter
 
-goal_steps = 100
+goal_steps = 50
 score_requirement = 1
-initial_games = 10000
+initial_games = 1000
 env = gym.make("snek-v1")
 env.reset()
 
