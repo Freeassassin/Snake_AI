@@ -3,6 +3,7 @@ import sys
 import gym
 import sneks
 import time
+import playsound
 import numpy as np
 from time import sleep
 from numpy import array
@@ -12,9 +13,9 @@ from statistics import median, mean
 from keras.layers import Dense, Input
 from keras.models import Sequential , load_model
 
-"""
+
 training_data = []
-training_dataFile = open("training_data.txt", "r")
+training_dataFile = open("smart_training_data.txt", "r")
 training_dataFile = training_dataFile.read()
 exec(training_dataFile)
 
@@ -29,7 +30,7 @@ for i in training_data:
 
 x_train = x_train.reshape(x,20)
 y_train = y_train.reshape(x,4)
-"""
+
 """
 model = Sequential([
 
@@ -38,11 +39,11 @@ model = Sequential([
     Dense(4, activation = 'softmax'),
 ])
 """
-model = load_model('snakeAI-v4.h5')
+model = load_model('snakeAI-v20.h5')
 model.compile(optimizer='adam',loss='categorical_crossentropy',metrics= ['accuracy'])
 
-#model.fit(x_train,y_train,epochs = 10)
-#model.save("snakeAI-v11.h5")
+model.fit(x_train,y_train,epochs = 5)
+model.save("snakeAI-v24.h5")
 
 def whereFood(x1,y1,x2,y2):
     if x1 == x2:
@@ -117,9 +118,9 @@ def cal_Distance(x1,y1,x2,y2):
     return dist
 
 
-goal_steps = 50
-score_requirement = 10
-initial_games = 10000
+goal_steps = 250
+score_requirement = 0
+initial_games = 1000
 
 
 env = gym.make("snek-v1")
@@ -213,9 +214,12 @@ for _ in range(initial_games):
 print('Average accepted score:',mean(accepted_scores))
 print('Median score for accepted scores:',median(accepted_scores))
 print(Counter(accepted_scores))
-
+import playsound
+playsound.playsound("BruhSoundEffect2.mp3" , True)
+"""
 File_object = open(r"smart_training_data.txt","a")
 for i in training_data:
     File_object.write(str(i))
     File_object.write(",") 
 File_object.close() 
+"""

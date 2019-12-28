@@ -2,14 +2,15 @@ import os
 import sys
 import gym
 import sneks
+import playsound
 import numpy as np
 from numpy import array
 from statistics import median, mean
 from collections import Counter
 
-goal_steps = 50
+goal_steps = 25
 score_requirement = 1
-initial_games = 1000
+initial_games = 10000
 env = gym.make("snek-v1")
 env.reset()
 
@@ -168,7 +169,7 @@ print('Average accepted score:',mean(accepted_scores))
 print('Median score for accepted scores:',median(accepted_scores))
 print(Counter(accepted_scores))
 
-
+playsound.playsound("BruhSoundEffect2.mp3" , True)
 File_object = open(r"training_data.txt","a")
 for i in training_data:
     File_object.write(str(i))
